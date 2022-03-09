@@ -1,14 +1,20 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
 
-use Cowsayphp\Farm;
-
 header('Content-Type: text/plain');
 
-$text = "Set a message by adding ?message=<message here> to the URL";
-if(isset($_GET['message']) && $_GET['message'] != '') {
-	$text = htmlspecialchars($_GET['message']);
+$megabyte = 512; // define the max megabytes which should be tested
+
+function tryAlloc($megabyte){
+    echo "Trying to allocating {$megabyte} megabyte...";
+    $mb = $megabyte;
+    $dummy = str_repeat("-",1048576*$mb);
+    echo "pass.";
+    echo "Usage: " . memory_get_usage(true)/1048576;
+    echo " Peak: " . memory_get_peak_usage(true)/1048576;
+    echo "\n";
 }
 
-$cow = Farm::create(\Cowsayphp\Farm\Cow::class);
-echo $cow->say($text);
+for($i=10;$i<=$megabyte;$i+=10){
+    tryAlloc($i-1);
+}
